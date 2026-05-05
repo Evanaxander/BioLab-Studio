@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioLab Studio Pro - Advanced Interactive Microbiology & Biotechnology Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0a0e27;
+            --primary-light: #1a1f3a;
+            --accent-cyan: #00d4ff;
+            --accent-green: #00ff88;
+            --accent-purple: #b366ff;
+            --accent-orange: #ff6b3d;
+            --accent-blue: #3d7aff;
+            --text-primary: #e8eef5;
+            --text-secondary: #a8b5c8;
+            --border-color: #2a3f5f;
+            --success: #00ff88;
+            --danger: #ff3d3d;
+            --warning: #ffa500;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--text-primary);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 320px 1fr 360px;
+            grid-template-rows: 70px 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            background: rgba(10, 14, 39, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            letter-spacing: 2px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 8px;
+            font-size: 18px;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 6px;
+            background: rgba(0, 212, 255, 0.05);
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .mode-btn {
+            padding: 6px 14px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn:hover {
+            color: var(--accent-cyan);
+        }
+
+        .mode-btn.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .ai-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent-green);
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .ai-indicator::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .sidebar-left {
+            grid-column: 1;
+            grid-row: 2;
+            background: rgba(10, 14, 39, 0.8);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .difficulty-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .difficulty-btn {
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .difficulty-btn:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(179, 102, 255, 0.2));
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .module-btn {
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+        }
+
+        .module-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--border-color);
+        }
+
+        .module-btn.active {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            padding-left: 20px;
+        }
+
+        .module-btn.active::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 8px var(--accent-cyan);
+        }
+
+        .progress-section {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(0, 255, 136, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            width: 35%;
+            transition: width 0.3s ease;
+        }
+
+        .canvas-container {
+            grid-column: 2;
+            grid-row: 2;
+            position: relative;
+            background: linear-gradient(135deg, rgba(10, 20, 50, 0.8), rgba(20, 30, 60, 0.8));
+            overflow: hidden;
+        }
+
+        #canvas3d {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .canvas-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 14, 39, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            max-width: 250px;
+            z-index: 10;
+        }
+
+        .hover-tooltip {
+            position: fixed;
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate3d(0, 6px, 0) scale(0.98);
+            transition: opacity 0.12s ease, transform 0.12s ease;
+            background: rgba(10, 14, 39, 0.92);
+            border: 1px solid rgba(0, 212, 255, 0.35);
+            color: var(--text-primary);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+        }
+
+        .hover-tooltip.visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        .canvas-overlay strong {
+            color: var(--accent-cyan);
+        }
+
+        .sidebar-right {
+            grid-column: 3;
+            grid-row: 2;
+            background: rgba(10, 14, 39, 0.8);
+            border-left: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-card {
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .info-card strong {
+            color: var(--accent-cyan);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 12px;
+        }
+
+        .tab-btn {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--accent-cyan);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .ai-suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .suggestion-item {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-item:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
+            border-color: var(--accent-green);
+        }
+
+        .suggestion-title {
+            color: var(--accent-green);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .model-builder-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .component-palette {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .component-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-align: center;
+            user-select: none;
+        }
+
+        .component-item:hover {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .component-item:active {
+            cursor: grabbing;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 10px 14px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .action-btn.secondary:hover {
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+            background: rgba(255, 107, 61, 0.1);
+        }
+
+        .status-message {
+            padding: 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent-green);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--accent-green);
+            margin-top: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .status-message.error {
+            background: rgba(255, 61, 61, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .status-message.warning {
+            background: rgba(255, 165, 0, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .metric {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 10px;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .metric-value {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin: 10px 0;
+        }
+
+        .slider-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .slider-label strong {
+            color: var(--accent-cyan);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-green));
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-cyan);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">⚛️</div>
+                    BioLab Studio Pro
+                </div>
+                <div class="ai-indicator">
+                    AI Co-Scientist Active
+                </div>
+            </div>
+
+            <div class="mode-selector">
+                <button class="mode-btn active" onclick="app.setMode('visualize', this)">Visualize</button>
+                <button class="mode-btn" onclick="app.setMode('build', this)">Build Model</button>
+                <button class="mode-btn" onclick="app.setMode('simulate', this)">Simulate</button>
+                <button class="mode-btn" onclick="app.setMode('experiment', this)">AI Experiment</button>
+            </div>
+        </div>
+
+        <!-- LEFT SIDEBAR -->
+        <div class="sidebar-left">
+            <div class="difficulty-section">
+                <div class="section-label">Learning Level</div>
+                <div class="difficulty-selector">
+                    <button class="difficulty-btn active" onclick="app.setDifficulty('beginner', this)">
+                        ▸ Beginner - Fundamentals
+                    </button>
+                    <button class="difficulty-btn" onclick="app.setDifficulty('intermediate', this)">
+                        ▸ Intermediate - Advanced
+                    </button>
+                    <button class="difficulty-btn" onclick="app.setDifficulty('expert', this)">
+                        ▸ Expert - Research Level
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-label">Modules</div>
+                <div class="module-list">
+                    <button class="module-btn active" onclick="app.loadModule('cell-structure')">Cell Structure & Organelles</button>
+                    <button class="module-btn" onclick="app.loadModule('dna-rna')">DNA & RNA Structures</button>
+                    <button class="module-btn" onclick="app.loadModule('protein-folding')">Protein Folding & Structure</button>
+                    <button class="module-btn" onclick="app.loadModule('viral-particles')">Viral Particles & Dynamics</button>
+                    <button class="module-btn" onclick="app.loadModule('enzyme-kinetics')">Enzyme Kinetics</button>
+                    <button class="module-btn" onclick="app.loadModule('cell-division')">Cell Division & Mitosis</button>
+                    <button class="module-btn" onclick="app.loadModule('antibody-antigen')">Antibody-Antigen Binding</button>
+                    <button class="module-btn" onclick="app.loadModule('crispr-cas9')">CRISPR-Cas9 System</button>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">
+                    <strong style="color: var(--accent-green);">Learning Progress</strong>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div style="margin-top: 6px; font-size: 10px;">Completed: <strong style="color: var(--accent-green);" id="progressText">0 / 8</strong></div>
+            </div>
+        </div>
+
+        <!-- MAIN CANVAS -->
+        <div class="canvas-container">
+            <canvas id="canvas3d"></canvas>
+            <div class="canvas-overlay" id="canvasOverlay">
+                <strong id="overlayTitle">Cell Structure</strong>
+                <div id="overlayInfo" style="margin-top: 8px; font-size: 11px;">Loading 3D model...</div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="sidebar-right">
+            <div class="info-panel">
+                <div class="panel-title">Current Model</div>
+                <div class="info-card">
+                    <strong id="modelTitle">Cell Structure</strong>
+                    <div id="modelDescription">Select a model to explore 3D visualization with interactive components.</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="app.switchTab('info')">Info</button>
+                    <button class="tab-btn" onclick="app.switchTab('properties')">Properties</button>
+                    <button class="tab-btn" onclick="app.switchTab('ai')">AI Assistant</button>
+                </div>
+
+                <div id="info-tab" class="tab-content active">
+                    <div class="info-card">
+                        <strong>About This Model</strong>
+                        <div id="infoContent" style="font-size: 11px; margin-top: 8px;">
+                            Click on 3D objects to explore components and their properties.
+                        </div>
+                    </div>
+                </div>
+
+                <div id="properties-tab" class="tab-content">
+                    <div class="metrics-grid" id="propertiesContent">
+                        <div class="metric">
+                            <div class="metric-label">Components</div>
+                            <div class="metric-value" id="componentCount">5</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Scale</div>
+                            <div class="metric-value">3D Dynamic</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ai-tab" class="tab-content">
+                    <div class="ai-suggestions" id="aiSuggestions">
+                        <div class="suggestion-item" onclick="app.generateAISuggestion('hypothesis')">
+                            <div class="suggestion-title">🧬 Hypothesis Generator</div>
+                            <div>Generate testable hypotheses based on current model</div>
+                        </div>
+                        <div class="suggestion-item" onclick="app.generateAISuggestion('protocol')">
+                            <div class="suggestion-title">⚗️ Experimental Design</div>
+                            <div>Design experiments to validate biological concepts</div>
+                        </div>
+                        <div class="suggestion-item" onclick="app.generateAISuggestion('analysis')">
+                            <div class="suggestion-title">📊 Data Analysis</div>
+                            <div>Analyze complex biological data pipelines</div>
+                        </div>
+                    </div>
+                    <div id="aiOutput"></div>
+                </div>
+            </div>
+
+            <div id="builderSection" style="display: none;">
+                <div class="panel-title">Model Builder</div>
+                <div class="model-builder-section">
+                    <div class="component-palette" id="componentPalette">
+                        <div class="component-item" draggable="true" data-component="nucleus" onclick="app.addComponent('nucleus')">Nucleus</div>
+                        <div class="component-item" draggable="true" data-component="mitochondria" onclick="app.addComponent('mitochondria')">Mitochondria</div>
+                        <div class="component-item" draggable="true" data-component="protein" onclick="app.addComponent('protein')">Protein</div>
+                        <div class="component-item" draggable="true" data-component="dna" onclick="app.addComponent('dna')">DNA</div>
+                        <div class="component-item" draggable="true" data-component="ribosome" onclick="app.addComponent('ribosome')">Ribosome</div>
+                        <div class="component-item" draggable="true" data-component="enzyme" onclick="app.addComponent('enzyme')">Enzyme</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="app.clearScene()">Clear Scene</button>
+                        <button class="action-btn secondary" onclick="app.saveModel()">Save Model</button>
+                    </div>
+                    <div id="builderStatus"></div>
+                </div>
+            </div>
+
+            <div id="simulationSection" style="display: none;">
+                <div class="panel-title">Simulation</div>
+                <div class="model-builder-section">
+                    <div class="slider-group">
+                        <label class="slider-label">Temperature: <strong id="tempValue">37</strong>°C</label>
+                        <input type="range" min="25" max="45" value="37" oninput="app.updateSimParameter('temperature', this.value)">
+                    </div>
+                    <div class="slider-group">
+                        <label class="slider-label">pH Level: <strong id="phValue">7.4</strong></label>
+                        <input type="range" min="4" max="9" step="0.1" value="7.4" oninput="app.updateSimParameter('pH', this.value)">
+                    </div>
+                    <div class="slider-group">
+                        <label class="slider-label">Concentration: <strong id="concValue">50</strong>%</label>
+                        <input type="range" min="0" max="100" value="50" oninput="app.updateSimParameter('concentration', this.value)">
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="app.startSimulation()">Run Simulation</button>
+                        <button class="action-btn secondary" onclick="app.pauseSimulation()">Pause</button>
+                    </div>
+                    <div id="simulationStatus"></div>
+                </div>
+            </div>
+
+            <div id="experimentSection" style="display: none;">
+                <div class="panel-title">AI Experiment Designer</div>
+                <div class="model-builder-section">
+                    <div class="ai-suggestions">
+                        <div class="suggestion-item" onclick="app.generateExperiment('hypothesis')">
+                            <div class="suggestion-title">💡 Generate Hypothesis</div>
+                            <div style="font-size: 10px;">AI-powered hypothesis generation</div>
+                        </div>
+                        <div class="suggestion-item" onclick="app.generateExperiment('protocol')">
+                            <div class="suggestion-title">📋 Design Protocol</div>
+                            <div style="font-size: 10px;">Experimental procedure design</div>
+                        </div>
+                        <div class="suggestion-item" onclick="app.generateExperiment('analysis')">
+                            <div class="suggestion-title">📈 Data Analysis Plan</div>
+                            <div style="font-size: 10px;">Statistical analysis framework</div>
+                        </div>
+                    </div>
+                    <div id="aiOutput"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hoverTooltip" class="hover-tooltip">Biological part</div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
