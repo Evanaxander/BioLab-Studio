@@ -1,5 +1,7 @@
 # BioLab Studio Pro - Advanced Interactive Microbiology & Biotechnology Learning Platform
 
+https://bio-lab-studio-xrn5.vercel.app/
+
 ## Overview
 
 BioLab Studio Pro is a comprehensive, production-grade educational platform designed for microbiology and biotechnology students. The system features full three-dimensional molecular visualization, AI-powered co-scientist assistance, functional model building capabilities, advanced simulation engines, and progressive difficulty scaling from beginner through research-level expertise.
